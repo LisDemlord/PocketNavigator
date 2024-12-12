@@ -55,7 +55,14 @@
       <option name="previewFile" value="true" />
     </inspection_tool>
     <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="SuppressionAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SuppressionAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myAllowedSuppressions">
+        <list>
+          <option value="OldTargetApi" />
+          <option value="UnstableApiUsage" />
+        </list>
+      </option>
+    </inspection_tool>
     <inspection_tool class="UnstableTypeUsedInSignature" enabled="true" level="WARNING" enabled_by_default="true" />
   </profile>
 </component>
