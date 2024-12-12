@@ -8,25 +8,26 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 
-@SuppressLint("CustomSplashScreen")
+@SuppressLint("CustomSplashScreen") // Подавляем предупреждение о кастомном экране загрузки
 class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // Задержка экрана загрузки (3 секунды)
+        // Задержка экрана загрузки на 3 секунды
         Handler(Looper.getMainLooper()).postDelayed({
-            // Проверка авторизации
+            // Проверяем, авторизован ли пользователь
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
-                // Если пользователь авторизован, переходим на карту
+                // Если пользователь авторизован, открываем MainActivity (экран с картой)
                 startActivity(Intent(this, MainActivity::class.java))
             } else {
-                // Если пользователь не авторизован, переходим на регистрацию/авторизацию
+                // Если пользователь не авторизован, переходим на экран авторизации
                 startActivity(Intent(this, AuthActivity::class.java))
             }
+            // Завершаем текущую активность, чтобы пользователь не мог вернуться на экран загрузки
             finish()
-        }, 3000)
+        }, 3000) // Задержка в миллисекундах (3000 = 3 секунды)
     }
 }

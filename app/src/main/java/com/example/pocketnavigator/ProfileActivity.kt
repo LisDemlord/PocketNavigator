@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class ProfileActivity : AppCompatActivity() {
 
+    // Переменные для бокового меню и его кнопки
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
 
@@ -18,11 +19,12 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        // Настройка DrawerLayout и Toolbar
+        // Инициализация DrawerLayout и Toolbar
         drawerLayout = findViewById(R.id.drawerLayoutProfile)
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar) // Устанавливаем Toolbar в качестве ActionBar
 
+        // Настройка кнопки "гамбургер" для бокового меню
         toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -30,39 +32,43 @@ class ProfileActivity : AppCompatActivity() {
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         ).apply {
-            drawerArrowDrawable.color = resources.getColor(R.color.white, theme) // Устанавливаем белый цвет
+            // Устанавливаем белый цвет для иконки
+            drawerArrowDrawable.color = resources.getColor(R.color.white, theme)
         }
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        drawerLayout.addDrawerListener(toggle) // Добавляем слушатель
+        toggle.syncState() // Синхронизируем состояние
 
-        // Настройка NavigationView
+        // Настройка бокового меню (NavigationView)
         val navigationView: NavigationView = findViewById(R.id.navigationViewProfile)
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_map -> {
-                    // Возвращение на карту
+                    // Переход на экран карты
                     startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    finish() // Завершаем текущую активность
                 }
                 R.id.nav_account -> {
-                    drawerLayout.closeDrawers() // Уже находимся на профиле
+                    // Уже находимся на экране профиля, просто закрываем меню
+                    drawerLayout.closeDrawers()
                 }
                 R.id.nav_logout -> {
+                    // Выход из аккаунта
                     logout()
                 }
             }
             true
         }
 
-        // Установка email пользователя
+        // Установка email текущего пользователя
         val emailTextView: TextView = findViewById(R.id.emailTextView)
-        val user = FirebaseAuth.getInstance().currentUser
-        emailTextView.text = user?.email ?: "Неизвестный пользователь"
+        val user = FirebaseAuth.getInstance().currentUser // Получаем текущего пользователя
+        emailTextView.text = user?.email ?: "Неизвестный пользователь" // Отображаем email или сообщение по умолчанию
     }
 
+    // Функция для выхода из аккаунта
     private fun logout() {
-        FirebaseAuth.getInstance().signOut()
-        startActivity(Intent(this, AuthActivity::class.java))
-        finish()
+        FirebaseAuth.getInstance().signOut() // Выходим из Firebase аккаунта
+        startActivity(Intent(this, AuthActivity::class.java)) // Переходим на экран авторизации
+        finish() // Завершаем текущую активность
     }
 }

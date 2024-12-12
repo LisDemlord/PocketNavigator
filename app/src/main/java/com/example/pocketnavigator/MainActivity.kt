@@ -21,6 +21,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainActivity : AppCompatActivity() {
 
+    // Объявление переменных для карты, меню и слоя местоположения
     private lateinit var map: MapView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
@@ -29,15 +30,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Настройка конфигурации OSMDroid
+        // Настройка OSMDroid (задание конфигурации)
         Configuration.getInstance().userAgentValue = packageName
         setContentView(R.layout.activity_main)
 
-        // Настройка Toolbar
+        // Инициализация Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Настройка DrawerLayout и кнопки "гамбургер"
+        // Настройка бокового меню (DrawerLayout) и кнопки "гамбургер"
         drawerLayout = findViewById(R.id.drawerLayout)
         toggle = ActionBarDrawerToggle(
             this,
@@ -46,72 +47,83 @@ class MainActivity : AppCompatActivity() {
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         ).apply {
-            drawerArrowDrawable.color = resources.getColor(R.color.white, theme) // Устанавливаем белый цвет
+            drawerArrowDrawable.color = resources.getColor(R.color.white, theme) // Устанавливаем белый цвет иконки
         }
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Инициализация NavigationView
+        // Настройка NavigationView для обработки нажатий на элементы меню
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_map -> {
+                    // Обработка нажатия на пункт меню "Карта"
                     Toast.makeText(this, "Карта", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_account -> {
+                    // Переход на экран профиля
                     startActivity(Intent(this, ProfileActivity::class.java))
                 }
                 R.id.nav_logout -> {
+                    // Выход из аккаунта
                     logout()
                 }
             }
-            drawerLayout.closeDrawers() // Закрыть меню после выбора
+            drawerLayout.closeDrawers() // Закрываем меню после выбора пункта
             true
         }
 
         // Инициализация карты
         map = findViewById(R.id.map)
-        map.setMultiTouchControls(true)
-        map.controller.setZoom(15.0)
+        map.setMultiTouchControls(true) // Включение управления жестами
+        map.controller.setZoom(15.0) // Установка начального масштаба
 
-        // Запрос разрешений и настройка слоя местоположения
+        // Запрос разрешений для доступа к местоположению
         requestLocationPermissions()
     }
 
+    // Функция для запроса разрешений на доступ к местоположению
     private fun requestLocationPermissions() {
         val permissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION, // Точное местоположение
+            Manifest.permission.ACCESS_COARSE_LOCATION // Приблизительное местоположение
         )
 
+        // Проверяем, какие разрешения отсутствуют
         val missingPermissions = permissions.filter {
             ActivityCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
+        // Если разрешения не предоставлены, запрашиваем их
         if (missingPermissions.isNotEmpty()) {
             requestPermissionsLauncher.launch(missingPermissions.toTypedArray())
         } else {
+            // Если разрешения уже предоставлены, настраиваем слой местоположения
             setupLocationOverlay()
         }
     }
 
+    // Лаунчер для обработки результата запроса разрешений
     private val requestPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val allGranted = permissions.all { it.value }
+            val allGranted = permissions.all { it.value } // Проверяем, все ли разрешения предоставлены
             if (allGranted) {
-                setupLocationOverlay()
+                setupLocationOverlay() // Настраиваем слой местоположения
             } else {
+                // Если разрешения не предоставлены, показываем сообщение
                 Toast.makeText(this, "Необходимо предоставить доступ к местоположению", Toast.LENGTH_SHORT).show()
             }
         }
 
+    // Настройка слоя местоположения
     private fun setupLocationOverlay() {
         myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), map)
-        myLocationOverlay.enableMyLocation()
-        myLocationOverlay.enableFollowLocation()
+        myLocationOverlay.enableMyLocation() // Включаем отображение местоположения
+        myLocationOverlay.enableFollowLocation() // Включаем следование за местоположением
 
-        map.overlays.add(myLocationOverlay)
+        map.overlays.add(myLocationOverlay) // Добавляем слой местоположения на карту
 
+        // При первом определении местоположения центрируем карту
         myLocationOverlay.runOnFirstFix {
             val myLocation = myLocationOverlay.myLocation
             if (myLocation != null) {
@@ -121,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Обработка жизненного цикла карты
     override fun onResume() {
         super.onResume()
         map.onResume()
@@ -136,10 +149,11 @@ class MainActivity : AppCompatActivity() {
         map.onDetach()
     }
 
+    // Функция для выхода из аккаунта
     private fun logout() {
-        FirebaseAuth.getInstance().signOut()
+        FirebaseAuth.getInstance().signOut() // Выходим из Firebase аккаунта
         Toast.makeText(this, "Вы вышли из аккаунта", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, AuthActivity::class.java))
-        finish()
+        startActivity(Intent(this, AuthActivity::class.java)) // Переходим на экран авторизации
+        finish() // Завершаем текущую активность
     }
 }
