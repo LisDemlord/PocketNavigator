@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name" translatable="false">PocketNavigator</string>
+    <string name="title_activity_splash" translatable="false">SplashActivity</string>
+    <string name="title_activity_auth" translatable="false">AuthActivity</string>
+    <string name="title_activity_search" translatable="false">SearchActivity</string>
+    <string name="navigation_drawer_open">Открыть меню</string>
+    <string name="navigation_drawer_close">Закрыть меню</string>
+    <string name="search_hint">Введите место</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+</resources>
